@@ -1,4 +1,5 @@
 import { getGQL } from "./query.js"
+import { renderErrorCard } from "./error.js"
 
 export async function graph1() {
     let existingToken = localStorage.getItem("jwt")
@@ -6,9 +7,20 @@ export async function graph1() {
         logout()
         return
     }
-    let info = await getGQL(1)
+    document.body.classList.add("overlay-open")
+    let info
+    try {
+        info = await getGQL(1)
+    } catch (err) {
+        console.log(err)
+        renderErrorCard("XP graph error", "We could not load your XP data right now. Please try again.")
+        return
+    }
     let xps = info?.data?.user?.[0]?.xps ?? []
-    if (!xps.length) return
+    if (!xps.length) {
+        renderErrorCard("XP graph error", "We could not load your XP data right now. Please try again.")
+        return
+    }
 
     let sorted = [...xps].sort(
         (a, b) => new Date(a.event.createdAt) - new Date(b.event.createdAt)
@@ -162,6 +174,7 @@ export async function graph1() {
     if (backBtn) {
         backBtn.addEventListener("click", () => {
             main.innerHTML = ``
+            document.body.classList.remove("overlay-open")
         })
     }
 }
@@ -173,11 +186,23 @@ export async function graph2() {
         logout()
         return
     }
-    let info = await getGQL(2)
+    document.body.classList.add("overlay-open")
+    let info
+    try {
+        info = await getGQL(2)
+    } catch (err) {
+        console.log(err)
+        renderErrorCard("Projects ratio error", "We could not load your project results right now. Please try again.")
+        return
+    }
     let fail = 0
     let failpro = []
     let pass = 0
     let passpro = []
+    if (!info?.data?.result?.length) {
+        renderErrorCard("Projects ratio error", "We could not load your project results right now. Please try again.")
+        return
+    }
     info.data.result.forEach(element => {
         if (element.grade == 1.2) {
             pass++
@@ -285,6 +310,7 @@ export async function graph2() {
     if (backBtn) {
         backBtn.addEventListener("click", () => {
             main.innerHTML = ``
+            document.body.classList.remove("overlay-open")
         })
     }
 }

@@ -70,9 +70,14 @@ export function getGQL(q = 0) {
         body: JSON.stringify({
             query: Query
         })
-    }).then(data => {
-        return data.json();
-    }).catch((err) => {
-        console.log(err)
+    }).then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Request failed (${res.status})`)
+        }
+        let payload = await res.json()
+        if (payload?.errors?.length) {
+            throw new Error(payload.errors[0]?.message || "Query failed")
+        }
+        return payload
     })
 }

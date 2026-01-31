@@ -1,6 +1,7 @@
 import { graph1, graph2 } from "./graph.js"
 import { logout } from "./login.js"
 import { getGQL } from "./query.js"
+import { renderErrorCard } from "./error.js"
 
 export async function profile() {
     let existingToken = localStorage.getItem("jwt")
@@ -8,6 +9,7 @@ export async function profile() {
         logout()
         return
     }
+    document.body.classList.remove("overlay-open")
     let sidebar = document.getElementById("sidebar")
     if (!sidebar) {
         let sidebarToggle = document.createElement("input")
@@ -45,21 +47,29 @@ export async function profile() {
     KickOut.addEventListener("click", logout)
     sidebarBottom.appendChild(KickOut)
 
-    let info = await getGQL()
-    let name = info.data.user[0].login
-    let firstName = info.data.user[0].firstName
-    let lastName = info.data.user[0].lastName
-    let xp = info.data.user[0].xps.reduce((toltal, vale) => toltal + vale.amount, 0)
+    let info
+    try {
+        info = await getGQL()
+    } catch (err) {
+        console.log(err)
+        renderErrorCard("Profile error", "We could not load your profile right now. Please try again.")
+        return
+    }
+    let name = info?.data?.user?.[0]?.login
+    let firstName = info?.data?.user?.[0]?.firstName
+    let lastName = info?.data?.user?.[0]?.lastName
+    let xp = info?.data?.user?.[0]?.xps?.reduce((toltal, vale) => toltal + vale.amount, 0)
     let xpc = "kB"
-    let rato = info.data.user[0].auditRatio
-    console.log(xp)
-    if (xp > 1000) {
-        xp = xp / 1000
-        console.log(xp)
+    let rato = info?.data?.user?.[0]?.auditRatio
+    if (!name || xp === undefined || rato === undefined) {
+        renderErrorCard("Profile error", "We could not load your profile right now. Please try again.")
+        return
     }
     if (xp > 1000) {
         xp = xp / 1000
-        console.log(xp)
+    }
+    if (xp > 1000) {
+        xp = xp / 1000
         xpc = "MB"
     }
     if (xpc == "kB") {
@@ -73,6 +83,7 @@ export async function profile() {
     main.innerHTML = ``
 
     let renderProfile = () => {
+        document.body.classList.add("overlay-open")
         main.innerHTML = `
         <section class="profile-view" aria-label="Profile">
             <div class="profile-card">
@@ -96,6 +107,7 @@ export async function profile() {
         if (backBtn) {
             backBtn.addEventListener("click", () => {
                 main.innerHTML = ``
+                document.body.classList.remove("overlay-open")
             })
         }
     }

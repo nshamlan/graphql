@@ -41,6 +41,7 @@ export function login(e) {
 
 export function logout() {
     localStorage.removeItem("jwt")
+    document.body.classList.add("overlay-open")
     let logoutBtn = document.getElementById("logout")
     if (logoutBtn) {
         logoutBtn.remove()
