@@ -1,4 +1,3 @@
-import { graph1, graph2 } from "./graph.js"
 import { logout } from "./login.js"
 import { getGQL } from "./query.js"
 import { renderErrorCard } from "./error.js"
