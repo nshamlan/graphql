@@ -100,6 +100,7 @@ export async function profile() {
                 <div class="profile-row"><span class="label">Last name</span><span class="value">${lastName}</span></div>
                 <div class="profile-row"><span class="label">XP</span><span class="value">${xp} ${xpc}</span></div>
                 <div class="profile-row"><span class="label">Ratio</span><span class="value">${rato}</span></div>
+                <div class="profile-hint">Use the sidebar to open the XP graph and projects ratio.</div>
             </div>
         </section>
         `
