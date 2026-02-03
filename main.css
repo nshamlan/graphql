@@ -384,6 +384,14 @@ main#main {
     align-items: center;
     justify-content: center;
     pointer-events: auto;
+    --xp-area-color: #151515;
+    --xp-area-start: 0.35;
+    --xp-area-end: 0.04;
+    --xp-glow-color: #0b0b0b;
+    --xp-glow-start: 0.2;
+    --xp-glow-end: 0.7;
+    --xp-shadow-color: #000;
+    --xp-shadow-opacity: 0.2;
 }
 
 .graph-card {
@@ -681,6 +689,31 @@ main#main {
 .graph-axis {
     font-size: 9px;
     fill: rgba(0, 0, 0, 0.6);
+}
+
+.graph-svg .xp-area-stop-start {
+    stop-color: var(--xp-area-color);
+    stop-opacity: var(--xp-area-start);
+}
+
+.graph-svg .xp-area-stop-end {
+    stop-color: var(--xp-area-color);
+    stop-opacity: var(--xp-area-end);
+}
+
+.graph-svg .xp-glow-stop-start {
+    stop-color: var(--xp-glow-color);
+    stop-opacity: var(--xp-glow-start);
+}
+
+.graph-svg .xp-glow-stop-end {
+    stop-color: var(--xp-glow-color);
+    stop-opacity: var(--xp-glow-end);
+}
+
+.graph-svg .xp-shadow {
+    flood-color: var(--xp-shadow-color);
+    flood-opacity: var(--xp-shadow-opacity);
 }
 
 .graph-gauge-track {

@@ -27,10 +27,10 @@ export async function graph1() {
     )
 
     let total = 0
-    let pointsRaw = sorted.map((entry) => {
-        total += entry.amount
+    let pointsRaw = sorted.map((project) => {
+        total += project.amount
         return {
-            date: new Date(entry.event.createdAt),
+            date: new Date(project.event.createdAt),
             value: total,
         }
     })
@@ -60,10 +60,7 @@ export async function graph1() {
     let points = pointsRaw.map((point, index) => {
         let denom = Math.max(pointsRaw.length - 1, 1)
         let x = padding.left + (innerWidth * index) / denom
-        let y =
-            padding.top +
-            innerHeight -
-            (innerHeight * (point.value - minValue)) / Math.max(range, 1)
+        let y = padding.top + innerHeight - (innerHeight * (point.value - minValue)) / Math.max(range, 1)
         return {
             x: x.toFixed(2),
             y: y.toFixed(2),
@@ -85,9 +82,8 @@ export async function graph1() {
     }
 
     let yTicks = 4
-    let yTickValues = Array.from({ length: yTicks + 1 }, (_, i) =>
-        Math.round((maxValue / yTicks) * i)
-    ).reverse()
+    let yTickValues = Array.from({ length: yTicks + 1 }, (_, i) => Math.round((maxValue / yTicks) * i)).reverse()
+
     let yTickLabels = yTickValues.map((tick) => {
         let amount = tick / 1000
         let unit = "kB"
@@ -101,10 +97,12 @@ export async function graph1() {
 
     let totalLabel = total / 1000
     let totalUnit = "kB"
+
     if (totalLabel >= 1000) {
         totalLabel = totalLabel / 1000
         totalUnit = "MB"
     }
+
     let totalDigits = totalUnit === "MB" ? 2 : 1
     let totalText = `${totalLabel.toFixed(totalDigits)} ${totalUnit}`
 
@@ -117,22 +115,17 @@ export async function graph1() {
         day: "numeric",
     })
 
-    let dots = points
-        .filter(
-            (_, index) => index % Math.ceil(points.length / 8) === 0 || index === points.length - 1
-        )
-        .map((point) => `<circle class="graph-dot" cx="${point.x}" cy="${point.y}" r="3" />`)
-        .join("")
+    let dots = points.filter(
+        (_, index) => index % Math.ceil(points.length / 8) === 0 || index === points.length - 1
+    ).map((point) => `<circle class="graph-dot" cx="${point.x}" cy="${point.y}" r="3" />`).join("")
 
-    let gridAndLabels = yTickValues
-        .map((_, index) => {
+    let gridAndLabels = yTickValues.map((_, index) => {
             let y = padding.top + (innerHeight / yTicks) * index
             return `
                 <line class="graph-grid" x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" />
                 <text class="graph-axis" x="${padding.left - 8}" y="${y + 4}">${yTickLabels[index]}</text>
             `
-        })
-        .join("")
+        }).join("")
 
     let main = document.getElementById("main")
     main.innerHTML = `
@@ -147,15 +140,15 @@ export async function graph1() {
             <svg class="graph-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="XP earned over time">
                 <defs>
                     <linearGradient id="xpArea" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stop-color="#151515" stop-opacity="0.35" />
-                        <stop offset="100%" stop-color="#151515" stop-opacity="0.04" />
+                        <stop class="xp-area-stop xp-area-stop-start" offset="0%" />
+                        <stop class="xp-area-stop xp-area-stop-end" offset="100%" />
                     </linearGradient>
                     <linearGradient id="xpGlow" x1="0" x2="1" y1="0" y2="0">
-                        <stop offset="0%" stop-color="#0b0b0b" stop-opacity="0.2" />
-                        <stop offset="100%" stop-color="#0b0b0b" stop-opacity="0.7" />
+                        <stop class="xp-glow-stop xp-glow-stop-start" offset="0%" />
+                        <stop class="xp-glow-stop xp-glow-stop-end" offset="100%" />
                     </linearGradient>
                     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.2" />
+                        <feDropShadow class="xp-shadow" dx="0" dy="6" stdDeviation="6" />
                     </filter>
                 </defs>
                 <rect class="graph-frame" x="10" y="10" width="${width - 20}" height="${height - 20}" />
