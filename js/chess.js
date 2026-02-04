@@ -125,7 +125,7 @@ boardGroup.add(base)
 scene.add(boardGroup)
 
 const createLathePiece = (points, material) => {
-    const geometry = new THREE.LatheGeometry(points, 48)
+    const geometry = new THREE.LatheGeometry(points, 128)
     const mesh = new THREE.Mesh(geometry, material)
     mesh.castShadow = true
     mesh.receiveShadow = true
